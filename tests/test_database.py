@@ -17,6 +17,10 @@ def test_initialize_database_migrates_existing_run_table(tmp_path):
         connection.execute(
             "CREATE TABLE rfp_runs (rfp_run_id TEXT PRIMARY KEY, created_at TEXT NOT NULL, status TEXT NOT NULL)"
         )
+        connection.execute(
+            "INSERT INTO rfp_runs VALUES (?, ?, ?)",
+            ("legacy-run", "2026-10-18T00:00:00+00:00", "complete"),
+        )
 
     initialize_database(db_path)
 
@@ -25,6 +29,7 @@ def test_initialize_database_migrates_existing_run_table(tmp_path):
         criteria_count = connection.execute("SELECT COUNT(*) FROM evaluation_criteria").fetchone()[0]
     assert "owner_id" in columns
     assert criteria_count == 5
+    assert get_run_ids("public", db_path) == ["legacy-run"]
 
 
 def test_run_history_is_private_to_authenticated_owner(tmp_path):

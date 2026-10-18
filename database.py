@@ -75,6 +75,9 @@ def initialize_database(db_path: Path | str = DB_PATH) -> None:
         }
         if "owner_id" not in run_columns:
             connection.execute("ALTER TABLE rfp_runs ADD COLUMN owner_id TEXT")
+        connection.execute(
+            "UPDATE rfp_runs SET owner_id='public' WHERE owner_id IS NULL"
+        )
         count = connection.execute("SELECT COUNT(*) FROM evaluation_criteria").fetchone()[0]
         if count == 0:
             connection.executemany(

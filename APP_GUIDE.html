@@ -80,7 +80,7 @@
 
   <main>
     <div class="callout warning">
-      <strong>Important for the public deployment:</strong> the code is being updated to require OIDC sign-in, isolate run history by account, and restrict shared criteria edits to configured administrators. These protections take effect only after the update is deployed and OIDC settings are added in Streamlit Cloud. Until then, the current hosted version remains public and unauthenticated. Do not upload real or confidential supplier documents.
+      <strong>Important for the public deployment:</strong> anyone can use this app without signing in. Evaluation history and criteria are shared with every visitor, who can edit the criteria. Do not upload real or confidential supplier documents or enter a valuable personal API key.
     </div>
 
     <section>
@@ -127,8 +127,8 @@
         <tbody>
           <tr>
             <td><strong>No access control</strong></td>
-            <td>The currently hosted version has no sign-in. The updated code requires OIDC and restricts run reads by the identity provider's stable user ID; only configured admin emails can edit the shared criteria.</td>
-            <td>Deploy the updated code and configure OIDC secrets and admin emails. Until then, keep real supplier data out of the hosted app.</td>
+            <td>There is no sign-in. Visitors share completed run history and anyone can edit criteria, which affects later evaluations.</td>
+            <td>Keep confidential supplier data out of this public deployment. Add authentication and authorization before using sensitive data.</td>
           </tr>
           <tr>
             <td><strong>Proposal text can influence AI</strong></td>
@@ -161,7 +161,7 @@
 
     <section>
       <h2>What it stores</h2>
-      <p>The SQLite database contains evaluation criteria, run status and dates, supplier metadata and rankings, and criterion-level scores, evidence, and justifications. It is stored alongside the app locally; on Community Cloud this storage is not guaranteed to persist. The updated code associates each run with an authenticated account and filters history by that account. Existing older runs without an owner are not exposed by the updated history view.</p>
+      <p>The SQLite database contains evaluation criteria, run status and dates, supplier metadata and rankings, and criterion-level scores, evidence, and justifications. It is stored alongside the app locally; on Community Cloud this storage is not guaranteed to persist. Runs and criteria are shared by all visitors in this public version.</p>
     </section>
 
     <section class="danger">
@@ -169,8 +169,8 @@
       <ol>
         <li>Keep the hosted app limited to fictional or non-sensitive sample documents.</li>
         <li>Use Demo mode unless you have a legitimate reason to send text to an AI provider.</li>
-        <li>Do not enter a valuable personal API key into the currently hosted unauthenticated version. If you already used a key and suspect it was exposed, revoke it and create a replacement.</li>
-        <li>Deploy the OIDC-protected version and configure Cloud secrets before inviting users. For production, add durable managed storage, operational logging, and a tested privacy/security review.</li>
+        <li>Do not enter a valuable personal API key into the public app. If you already used a key and suspect it was exposed, revoke it and create a replacement.</li>
+        <li>Before production use, add authentication, per-user access checks, durable managed storage, operational logging, and a tested privacy/security review.</li>
         <li>Always have a qualified person verify proposal evidence and make the final procurement decision.</li>
       </ol>
     </section>

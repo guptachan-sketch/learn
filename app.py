@@ -9,7 +9,6 @@ from pathlib import Path
 
 import pandas as pd
 import streamlit as st
-from streamlit.errors import StreamlitSecretNotFoundError
 
 from database import DB_PATH, create_run, get_criteria, get_run_ids, get_run_results, initialize_database, mark_run_failed, persist_results, update_criteria
 from documents import extract_pdf_text
@@ -17,33 +16,7 @@ from evaluation import calculate_scores, demo_evaluation, evaluate_with_llm, nor
 
 st.set_page_config(page_title="Agentic RFP Evaluator", page_icon="📑", layout="wide")
 
-try:
-    auth_config = st.secrets.get("auth", {})
-except StreamlitSecretNotFoundError:
-    auth_config = {}
-required_auth_settings = ("redirect_uri", "cookie_secret", "client_id", "client_secret", "server_metadata_url")
-if any(not auth_config.get(key) for key in required_auth_settings):
-    st.error("Authentication is not configured. Set the required [auth] values in Streamlit Community Cloud Secrets.")
-    st.stop()
-
-if not st.user.is_logged_in:
-    st.title("📑 Agentic RFP Evaluator")
-    st.info("Sign in with the configured identity provider to use this app.")
-    st.button("Sign in", on_click=st.login)
-    st.stop()
-
-user_id = str(st.user.get("sub", "")).strip()
-user_email = str(st.user.get("email", "")).strip().casefold()
-if not user_id or not user_email:
-    st.error("The identity provider did not return the required user ID and email claims.")
-    st.stop()
-
-app_config = st.secrets.get("app", {})
-configured_admin_emails = app_config.get("admin_emails", [])
-if not isinstance(configured_admin_emails, list):
-    configured_admin_emails = []
-admin_emails = {str(email).strip().casefold() for email in configured_admin_emails}
-is_admin = user_email in admin_emails
+PUBLIC_OWNER_ID = "public"
 
 initialize_database()
 
@@ -51,9 +24,7 @@ st.title("📑 Agentic RFP Evaluator")
 st.caption("Evidence-grounded supplier review · transparent scoring · deterministic ranking")
 
 with st.sidebar:
-    st.caption(f"Signed in as {user_email}")
-    st.button("Sign out", on_click=st.logout)
-    st.divider()
+    st.warning("Public app: evaluation history and criteria are shared with all visitors.")
     st.header("Evaluation mode")
     mode = st.radio("Choose how proposals are assessed", ["Demo (no API key)", "Live LLM"], help="Demo mode is a deterministic keyword heuristic for testing the workflow. Live LLM mode calls the selected model API.")
     api_key = ""
@@ -68,31 +39,27 @@ st.subheader("1 · Evaluation criteria")
 criteria = get_criteria(active_only=False)
 criteria_frame = pd.DataFrame(criteria)
 if not criteria_frame.empty:
-    if is_admin:
-        edited_criteria = st.data_editor(
-            criteria_frame,
-            column_config={
-                "criterion_id": st.column_config.NumberColumn("ID", disabled=True),
-                "name": st.column_config.TextColumn("Criterion", disabled=True),
-                "description": st.column_config.TextColumn("What to assess", width="large"),
-                "weight": st.column_config.NumberColumn("Weight (%)", min_value=0.0, max_value=100.0, step=1.0),
-                "max_score": st.column_config.NumberColumn("Maximum score", min_value=0.1, max_value=100.0, step=0.5),
-                "is_active": st.column_config.CheckboxColumn("Active"),
-            },
-            hide_index=True, width="stretch", key="criteria_editor",
-        )
-        active_weight = float(edited_criteria.loc[edited_criteria["is_active"], "weight"].sum())
-        st.caption(f"Active weights total: **{active_weight:g}%** (must equal 100%).")
-        if st.button("Save criteria", key="save_criteria"):
-            try:
-                update_criteria(edited_criteria.to_dict(orient="records"))
-                st.success("Criteria saved to SQLite.")
-                st.rerun()
-            except (ValueError, sqlite3.Error) as error:
-                st.error(str(error))
-    else:
-        st.dataframe(criteria_frame, hide_index=True, width="stretch")
-        st.info("Evaluation criteria are read-only. Contact the configured app administrator to change them.")
+    edited_criteria = st.data_editor(
+        criteria_frame,
+        column_config={
+            "criterion_id": st.column_config.NumberColumn("ID", disabled=True),
+            "name": st.column_config.TextColumn("Criterion", disabled=True),
+            "description": st.column_config.TextColumn("What to assess", width="large"),
+            "weight": st.column_config.NumberColumn("Weight (%)", min_value=0.0, max_value=100.0, step=1.0),
+            "max_score": st.column_config.NumberColumn("Maximum score", min_value=0.1, max_value=100.0, step=0.5),
+            "is_active": st.column_config.CheckboxColumn("Active"),
+        },
+        hide_index=True, width="stretch", key="criteria_editor",
+    )
+    active_weight = float(edited_criteria.loc[edited_criteria["is_active"], "weight"].sum())
+    st.caption(f"Active weights total: **{active_weight:g}%** (must equal 100%).")
+    if st.button("Save criteria", key="save_criteria"):
+        try:
+            update_criteria(edited_criteria.to_dict(orient="records"))
+            st.success("Criteria saved to SQLite.")
+            st.rerun()
+        except (ValueError, sqlite3.Error) as error:
+            st.error(str(error))
 
 st.subheader("2 · Supplier proposals")
 uploads = st.file_uploader("Upload supplier proposal PDFs", type=["pdf"], accept_multiple_files=True, help="Text-based PDFs are supported; scanned documents need OCR before upload.")
@@ -130,7 +97,7 @@ if uploads:
         elif metadata["supplier_name"].astype(str).str.casefold().duplicated().any():
             st.error("Supplier names must be unique within one evaluation batch.")
         else:
-            run_id = create_run(user_id)
+            run_id = create_run(PUBLIC_OWNER_ID)
             scorecards = []
             warnings = []
             progress = st.progress(0, text="Starting evaluation…")
@@ -153,12 +120,12 @@ if uploads:
                     progress.progress(index / len(uploads), text=f"Evaluated {index} of {len(uploads)} suppliers")
                 ranked, ranking_warnings = calculate_scores(scorecards, active_criteria)
                 warnings.extend(ranking_warnings)
-                persist_results(run_id, user_id, ranked)
+                persist_results(run_id, PUBLIC_OWNER_ID, ranked)
                 payload = {"rfp_run_id": run_id, "warnings": warnings, "ranking_rule": "PPI descending, submission date ascending, experience rating descending, supplier name ascending", "suppliers": ranked}
                 st.session_state["latest_run"] = payload
                 st.success(f"Evaluation complete · run {run_id}")
             except Exception as error:
-                mark_run_failed(run_id, user_id)
+                mark_run_failed(run_id, PUBLIC_OWNER_ID)
                 st.error(f"Evaluation failed: {error}")
                 st.info("Check that each PDF contains selectable text, the live API key/model is valid, and active criterion weights total 100%.")
 
@@ -184,11 +151,11 @@ if latest:
     st.download_button("Download complete run as JSON", data=json.dumps(latest, indent=2, ensure_ascii=False), file_name=f"rfp_run_{latest['rfp_run_id']}.json", mime="application/json")
 
 st.subheader("4 · Previous runs")
-run_ids = get_run_ids(user_id)
+run_ids = get_run_ids(PUBLIC_OWNER_ID)
 if run_ids:
     selected_run = st.selectbox("Load a completed run", run_ids)
     if st.button("Show selected run"):
-        stored = get_run_results(selected_run, user_id)
+        stored = get_run_results(selected_run, PUBLIC_OWNER_ID)
         st.json({"rfp_run_id": selected_run, "suppliers": stored})
 else:
     st.caption("Completed evaluations will be available here.")
