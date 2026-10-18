@@ -24,7 +24,8 @@ Use Python 3.10 or newer. From this folder:
 2. Install the project dependencies with `python -m pip install -r requirements.txt`.
 3. Generate six fictional supplier documents with `python generate_samples.py`.
 4. Start the app with `streamlit run app.py`.
-5. To use the notebook, open `Agentic_RFP_Evaluation.ipynb`, select the same Python environment, and run cells from top to bottom.
+5. To demo the bundled proposals, select **Try the six bundled fictional proposals** in the app.
+6. To use the notebook, open `Agentic_RFP_Evaluation.ipynb`, select the same Python environment, and run cells from top to bottom.
 
 On first app launch, SQLite is initialized as `rfp_evaluation.db` and seeded with the sample criteria. The default active weights sum to 100%: Technical Capability 30%, Implementation Plan 20%, Commercial Value 20%, Security & Compliance 20%, and Support & Experience 10%.
 
