@@ -39,7 +39,8 @@ def initialize_database(db_path: Path | str = DB_PATH) -> None:
             CREATE TABLE IF NOT EXISTS rfp_runs (
                 rfp_run_id TEXT PRIMARY KEY,
                 created_at TEXT NOT NULL,
-                status TEXT NOT NULL
+                status TEXT NOT NULL,
+                owner_id TEXT
             );
             CREATE TABLE IF NOT EXISTS supplier_results (
                 result_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,6 +70,11 @@ def initialize_database(db_path: Path | str = DB_PATH) -> None:
             CREATE INDEX IF NOT EXISTS idx_supplier_results_run_rank
                 ON supplier_results(rfp_run_id, final_rank);
         """)
+        run_columns = {
+            row["name"] for row in connection.execute("PRAGMA table_info(rfp_runs)")
+        }
+        if "owner_id" not in run_columns:
+            connection.execute("ALTER TABLE rfp_runs ADD COLUMN owner_id TEXT")
         count = connection.execute("SELECT COUNT(*) FROM evaluation_criteria").fetchone()[0]
         if count == 0:
             connection.executemany(
@@ -95,20 +101,34 @@ def update_criteria(criteria: list[dict[str, Any]], db_path: Path | str = DB_PAT
             )
 
 
-def create_run(db_path: Path | str = DB_PATH) -> str:
+def create_run(owner_id: str, db_path: Path | str = DB_PATH) -> str:
+    owner_id = owner_id.strip()
+    if not owner_id:
+        raise ValueError("An authenticated owner ID is required to create a run.")
     run_id = str(uuid.uuid4())
     with connect(db_path) as connection:
         connection.execute(
-            "INSERT INTO rfp_runs(rfp_run_id, created_at, status) VALUES (?, ?, ?)",
-            (run_id, datetime.now(timezone.utc).isoformat(timespec="seconds"), "running"),
+            "INSERT INTO rfp_runs(rfp_run_id, created_at, status, owner_id) VALUES (?, ?, ?, ?)",
+            (run_id, datetime.now(timezone.utc).isoformat(timespec="seconds"), "running", owner_id),
         )
     return run_id
 
 
-def persist_results(run_id: str, results: list[dict[str, Any]], db_path: Path | str = DB_PATH) -> None:
+def persist_results(
+    run_id: str,
+    owner_id: str,
+    results: list[dict[str, Any]],
+    db_path: Path | str = DB_PATH,
+) -> None:
     """Persist leaderboard and scorecards together; mark the run complete atomically."""
     with connect(db_path) as connection:
         with connection:
+            owner = connection.execute(
+                "SELECT 1 FROM rfp_runs WHERE rfp_run_id=? AND owner_id=?",
+                (run_id, owner_id.strip()),
+            ).fetchone()
+            if owner is None:
+                raise ValueError("Run not found or not owned by the authenticated user.")
             for supplier in results:
                 result_json = json.dumps(supplier, ensure_ascii=False)
                 cursor = connection.execute(
@@ -127,17 +147,43 @@ def persist_results(run_id: str, results: list[dict[str, Any]], db_path: Path | 
                         (cursor.lastrowid, item["criterion_id"], item["score"], item["max_score"], item["weight"],
                          item["benchmark"], item["gap"], item["relative_performance"], item["justification"], item["evidence"]),
                     )
-            connection.execute("UPDATE rfp_runs SET status='complete' WHERE rfp_run_id=?", (run_id,))
+            connection.execute(
+                "UPDATE rfp_runs SET status='complete' WHERE rfp_run_id=? AND owner_id=?",
+                (run_id, owner_id.strip()),
+            )
 
 
-def get_run_ids(db_path: Path | str = DB_PATH) -> list[str]:
+def mark_run_failed(run_id: str, owner_id: str, db_path: Path | str = DB_PATH) -> None:
     with connect(db_path) as connection:
-        return [row[0] for row in connection.execute("SELECT rfp_run_id FROM rfp_runs WHERE status='complete' ORDER BY created_at DESC")]
+        connection.execute(
+            "UPDATE rfp_runs SET status='failed' WHERE rfp_run_id=? AND owner_id=?",
+            (run_id, owner_id.strip()),
+        )
 
 
-def get_run_results(run_id: str, db_path: Path | str = DB_PATH) -> list[dict[str, Any]]:
+def get_run_ids(owner_id: str, db_path: Path | str = DB_PATH) -> list[str]:
+    with connect(db_path) as connection:
+        return [
+            row[0]
+            for row in connection.execute(
+                "SELECT rfp_run_id FROM rfp_runs WHERE status='complete' AND owner_id=? ORDER BY created_at DESC",
+                (owner_id.strip(),),
+            )
+        ]
+
+
+def get_run_results(
+    run_id: str,
+    owner_id: str,
+    db_path: Path | str = DB_PATH,
+) -> list[dict[str, Any]]:
     with connect(db_path) as connection:
         rows = connection.execute(
-            "SELECT result_json FROM supplier_results WHERE rfp_run_id=? ORDER BY final_rank", (run_id,)
+            """SELECT sr.result_json
+            FROM supplier_results sr
+            JOIN rfp_runs r ON r.rfp_run_id = sr.rfp_run_id
+            WHERE sr.rfp_run_id=? AND r.owner_id=?
+            ORDER BY sr.final_rank""",
+            (run_id, owner_id.strip()),
         ).fetchall()
     return [json.loads(row[0]) for row in rows]

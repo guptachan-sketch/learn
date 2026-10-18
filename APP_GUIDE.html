@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A plain-language guide to the Agentic RFP Evaluator, its workflow, scoring, AI use, and security limitations.">
+  <title>Agentic RFP Evaluator — Plain-Language Guide</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #182230;
+      --muted: #526174;
+      --blue: #1454e8;
+      --pale: #f2f6fc;
+      --line: #d8e0ec;
+      --warning: #fff5dc;
+      --warning-line: #d88a00;
+      --danger: #fff0ed;
+      --danger-line: #c33e2e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f7f9fc;
+      color: var(--ink);
+      font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    header {
+      padding: 3rem max(1.25rem, calc((100% - 960px) / 2));
+      background: #102a56;
+      color: #fff;
+    }
+    header p { max-width: 760px; color: #dbe8ff; }
+    main { max-width: 960px; margin: 2rem auto; padding: 0 1.25rem 3rem; }
+    section, .callout {
+      margin: 1.2rem 0;
+      padding: 1.35rem 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; }
+    h2 { margin: 0 0 .6rem; color: #12366f; font-size: 1.4rem; }
+    h3 { margin-bottom: .2rem; font-size: 1.05rem; }
+    p { margin: .55rem 0; }
+    a { color: var(--blue); }
+    li { margin: .35rem 0; }
+    .lead { font-size: 1.15rem; }
+    .callout { background: var(--pale); }
+    .warning { background: var(--warning); border-left: 5px solid var(--warning-line); }
+    .danger { background: var(--danger); border-left: 5px solid var(--danger-line); }
+    .pill {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 999px;
+      background: #e7efff;
+      color: #153c82;
+      font-size: .85rem;
+      font-weight: 650;
+    }
+    .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .75rem; }
+    .step { padding: 1rem; border-radius: 10px; background: var(--pale); }
+    .step strong { display: block; color: #12366f; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .7rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #12366f; }
+    footer { color: var(--muted); font-size: .9rem; }
+    @media (max-width: 600px) {
+      section, .callout { padding: 1rem; }
+      table { font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Agentic RFP Evaluator</h1>
+    <p class="lead">A plain-language guide to what the app does, how it reaches a supplier ranking, which AI model it can use, and what to know before sharing it.</p>
+    <p><span class="pill">Decision-support tool</span> The score is not a purchasing decision. A person should verify the proposal evidence and risks.</p>
+  </header>
+
+  <main>
+    <div class="callout warning">
+      <strong>Important for the public deployment:</strong> the code is being updated to require OIDC sign-in, isolate run history by account, and restrict shared criteria edits to configured administrators. These protections take effect only after the update is deployed and OIDC settings are added in Streamlit Cloud. Until then, the current hosted version remains public and unauthenticated. Do not upload real or confidential supplier documents.
+    </div>
+
+    <section>
+      <h2>What the app does</h2>
+      <p>The app helps compare supplier proposals against a set of evaluation criteria. It reads text from uploaded PDFs, produces a scorecard for each supplier, calculates weighted scores and peer comparisons, and displays a ranked leaderboard. You can review the evidence, explanations, warnings, and risks, then download a run as JSON.</p>
+      <p>It supports two assessment modes:</p>
+      <ul>
+        <li><strong>Demo mode:</strong> searches proposal text for category-related keywords. It needs no AI service and no API key. Its scores are only a demonstration, not an AI assessment.</li>
+        <li><strong>Live LLM mode:</strong> asks a selected model to return criterion scores, explanations, evidence, risks, and a summary. Model output can be mistaken or influenced by text in a proposal.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>How a comparison works</h2>
+      <div class="flow">
+        <div class="step"><strong>1. Set the criteria</strong>Choose which criteria are active and their weights. Active weights must add to 100%.</div>
+        <div class="step"><strong>2. Upload proposals</strong>Add text-based PDFs and enter supplier names, submission dates, and experience ratings.</div>
+        <div class="step"><strong>3. Assess each proposal</strong>Demo mode uses keywords; Live mode sends extracted text to the chosen AI provider.</div>
+        <div class="step"><strong>4. Check and normalize</strong>The app checks the response shape, fills missing scores with zero, clips scores to their allowed range, and shows warnings.</div>
+        <div class="step"><strong>5. Calculate scores</strong>Python calculates weighted scores, criterion benchmarks, performance percentages, and ranks.</div>
+        <div class="step"><strong>6. Review and export</strong>Inspect the evidence and risks in the scorecards, and download the results as JSON.</div>
+      </div>
+      <h3>How ranking is calculated</h3>
+      <p>The absolute score is the weighted sum of each criterion score divided by its maximum. The PPI is a weighted average of each supplier's performance relative to the best supplier in that run for each criterion. The leaderboard sorts by PPI (high to low), earlier submission date, higher experience rating, and then supplier name alphabetically.</p>
+    </section>
+
+    <section>
+      <h2>Which AI model and API key does it use?</h2>
+      <ul>
+        <li>The Live LLM screen defaults to <strong>gpt-4o-mini</strong>, called through the OpenAI Python client.</li>
+        <li>The model name is editable in the app, so a different compatible model can be entered. The code expects an OpenAI-compatible chat-completions API that supports JSON mode.</li>
+        <li>The app does <strong>not</strong> include a provider API key in the public source code, SQLite database, or checked-in configuration.</li>
+        <li>In Live mode, the person using the app enters their own API key in a password-masked field. The app passes that value to the OpenAI client for the request; it does not read a key from Streamlit secrets or an environment variable in the reviewed code.</li>
+        <li>Demo mode makes no LLM request and needs no key.</li>
+        <li>Live API requests include the supplier name, active criteria, and up to 60,000 characters of extracted proposal text. The provider may charge the key owner for use. Check the provider's terms and data-retention policy before sending proposal material.</li>
+      </ul>
+      <p>Password masking only hides the characters on screen; it does not make the key safe to use on an untrusted public app. Prefer a private, authenticated deployment for Live mode.</p>
+    </section>
+
+    <section>
+      <h2>Security and privacy concerns</h2>
+      <table>
+        <thead><tr><th>Concern</th><th>What it means in everyday terms</th><th>Practical advice</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>No access control</strong></td>
+            <td>The currently hosted version has no sign-in. The updated code requires OIDC and restricts run reads by the identity provider's stable user ID; only configured admin emails can edit the shared criteria.</td>
+            <td>Deploy the updated code and configure OIDC secrets and admin emails. Until then, keep real supplier data out of the hosted app.</td>
+          </tr>
+          <tr>
+            <td><strong>Proposal text can influence AI</strong></td>
+            <td>A PDF may contain instructions intended to manipulate an AI model. The prompt asks the model to ignore such instructions, but this is not a reliable security barrier.</td>
+            <td>Treat AI scores as suggestions. Review every important score against the original proposal and test with deliberately adversarial documents.</td>
+          </tr>
+          <tr>
+            <td><strong>Third-party data sharing</strong></td>
+            <td>Live mode sends extracted proposal text to the configured model provider. Demo mode does not.</td>
+            <td>Use only documents you are allowed to share, and review the provider's privacy and retention terms.</td>
+          </tr>
+          <tr>
+            <td><strong>Public source and public app</strong></td>
+            <td>Anyone can inspect the code and use the hosted app. Public code is not itself a secret leak; the reviewed tracked code contains no API key.</td>
+            <td>Keep keys out of Git, rotate any key that may have been exposed, and do not treat an unlisted app URL as access control.</td>
+          </tr>
+          <tr>
+            <td><strong>Database persistence</strong></td>
+            <td>The app writes to local SQLite storage. Streamlit Community Cloud storage may be reset during restarts or redeployments, and the same app instance serves multiple visitors.</td>
+            <td>Do not use this local database as durable or private production storage. Use a properly secured managed database if needed.</td>
+          </tr>
+          <tr>
+            <td><strong>PDF limitations</strong></td>
+            <td>The app extracts selectable text. Scanned image-only PDFs need OCR and may not be read correctly.</td>
+            <td>Check extracted evidence and page references before relying on results.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>What it stores</h2>
+      <p>The SQLite database contains evaluation criteria, run status and dates, supplier metadata and rankings, and criterion-level scores, evidence, and justifications. It is stored alongside the app locally; on Community Cloud this storage is not guaranteed to persist. The updated code associates each run with an authenticated account and filters history by that account. Existing older runs without an owner are not exposed by the updated history view.</p>
+    </section>
+
+    <section class="danger">
+      <h2>Recommended use right now</h2>
+      <ol>
+        <li>Keep the hosted app limited to fictional or non-sensitive sample documents.</li>
+        <li>Use Demo mode unless you have a legitimate reason to send text to an AI provider.</li>
+        <li>Do not enter a valuable personal API key into the currently hosted unauthenticated version. If you already used a key and suspect it was exposed, revoke it and create a replacement.</li>
+        <li>Deploy the OIDC-protected version and configure Cloud secrets before inviting users. For production, add durable managed storage, operational logging, and a tested privacy/security review.</li>
+        <li>Always have a qualified person verify proposal evidence and make the final procurement decision.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Project files</h2>
+      <ul>
+        <li><code>app.py</code> contains the Streamlit interface and workflow.</li>
+        <li><code>documents.py</code> extracts text from PDF files and creates fictional samples.</li>
+        <li><code>evaluation.py</code> handles the Live LLM request, demo scoring, validation, calculations, and ranking.</li>
+        <li><code>database.py</code> creates and reads the SQLite tables.</li>
+        <li><code>tests/</code> contains automated checks for scoring and response validation.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Prepared from the project's source code and README. This guide is an explanation, not a formal security certification. Public deployment: <a href="https://guptachan-rfp-evaluator.streamlit.app/">guptachan-rfp-evaluator.streamlit.app</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

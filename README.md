@@ -16,6 +16,8 @@ A classroom mini project that evaluates fictional supplier RFP PDFs against crit
 
 ## Setup
 
+For a plain-language overview of the app, workflow, AI usage, and security caveats, open [APP_GUIDE.html](./APP_GUIDE.html).
+
 Use Python 3.10 or newer. From this folder:
 
 1. Create and activate a virtual environment using your preferred environment manager.
@@ -28,9 +30,29 @@ On first app launch, SQLite is initialized as `rfp_evaluation.db` and seeded wit
 
 ## Deploy on Streamlit Community Cloud
 
-Community Cloud deploys from a GitHub repository. Sign in to Streamlit Community Cloud with an account that can access your GitHub repository, push this project to GitHub, then create a new app with `app.py` as the entry point. Keep `requirements.txt`, the Python modules, and `sample_proposals/` in the repository. The generated proposal PDFs are fictional and safe to include. Do not commit `.venv/`, `rfp_evaluation.db`, API keys, or real supplier proposals. The demo runs without secrets; configure provider credentials in Streamlit app secrets only if you later add a secrets-based live mode.
+Community Cloud deploys from a GitHub repository. Sign in to Streamlit Community Cloud with an account that can access your GitHub repository, push this project to GitHub, then create a new app with `app.py` as the entry point. Keep `requirements.txt`, the Python modules, and `sample_proposals/` in the repository. The generated proposal PDFs are fictional and safe to include. Do not commit `.venv/`, `rfp_evaluation.db`, API keys, or real supplier proposals. Demo mode needs no LLM API key, but the updated hosted app requires OIDC authentication secrets for access.
 
-**Storage caveat:** Streamlit Community Cloud's local filesystem should not be treated as durable storage. The SQLite database is appropriate for this classroom demonstration, but runs and criteria edits may not survive app restarts or redeployments. For durable multi-user production deployment, move persistence to a managed database. The app currently has no login or access control, so do not publish confidential supplier documents.
+**Storage caveat:** Streamlit Community Cloud's local filesystem should not be treated as durable storage. The SQLite database is appropriate for this classroom demonstration, but runs and criteria edits may not survive app restarts or redeployments. For durable multi-user production deployment, move persistence to a managed database. Do not publish confidential supplier documents.
+
+## Authentication and access control
+
+The app uses Streamlit's OpenID Connect login and fails closed unless its authentication settings are configured. Each completed run is tagged with the identity provider's stable `sub` claim; run history queries and result reads are restricted to that owner. Existing runs without an owner are not shown after the ownership migration. Evaluation criteria are shared, so only email addresses listed in `app.admin_emails` may edit them.
+
+Configure an OIDC client with the redirect URL `https://<your-app-subdomain>.streamlit.app/oauth2callback`, then add the provider settings under **App settings → Secrets** in Streamlit Community Cloud. For a Google OIDC client, the TOML shape is:
+
+```toml
+[auth]
+redirect_uri = "https://<your-app-subdomain>.streamlit.app/oauth2callback"
+cookie_secret = "<a strong, randomly generated secret>"
+client_id = "<OIDC client ID>"
+client_secret = "<OIDC client secret>"
+server_metadata_url = "https://accounts.google.com/.well-known/openid-configuration"
+
+[app]
+admin_emails = ["<administrator email>"]
+```
+
+Register the same redirect URL with the identity provider. Keep the real client secret and cookie secret only in Streamlit Cloud Secrets or a local ignored `.streamlit/secrets.toml`; never commit them. Until this configuration is added, the updated app intentionally displays an authentication setup error and stops. The currently deployed version must be updated and its Cloud secrets configured before its login protection takes effect.
 
 ## LLM key and modes
 
