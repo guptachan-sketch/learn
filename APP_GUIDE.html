@@ -89,19 +89,20 @@
       <p>It supports two assessment modes:</p>
       <ul>
         <li><strong>Demo mode:</strong> searches proposal text for category-related keywords. It needs no AI service and no API key. Its scores are only a demonstration, not an AI assessment.</li>
-        <li><strong>Live LLM mode:</strong> asks a selected model to return criterion scores, explanations, evidence, risks, and a summary. Model output can be mistaken or influenced by text in a proposal.</li>
+        <li><strong>OpenAI API mode:</strong> asks a selected OpenAI model to return criterion scores, explanations, evidence, risks, and a summary. Model output can be mistaken or influenced by text in a proposal.</li>
       </ul>
     </section>
 
     <section>
       <h2>How a comparison works</h2>
+      <p>The app keeps these steps in horizontal tabs: <strong>Criteria</strong>, <strong>Evaluate suppliers</strong>, <strong>Leaderboard</strong>, <strong>Scorecards</strong>, and <strong>History</strong>. In Scorecards, each supplier has a separate tab so you can review details without scrolling past every supplier.</p>
       <div class="flow">
         <div class="step"><strong>1. Set the criteria</strong>Choose which criteria are active and their weights. Active weights must add to 100%.</div>
         <div class="step"><strong>2. Choose proposals</strong>Use the six bundled fictional examples for a quick demo, or upload your own text-based PDFs and enter supplier details.</div>
-        <div class="step"><strong>3. Assess each proposal</strong>Demo mode uses keywords; Live mode sends extracted text to the chosen AI provider.</div>
+        <div class="step"><strong>3. Assess each proposal</strong>Demo mode uses keywords; OpenAI API mode sends extracted text to the selected OpenAI model.</div>
         <div class="step"><strong>4. Check and normalize</strong>The app checks the response shape, fills missing scores with zero, clips scores to their allowed range, and shows warnings.</div>
         <div class="step"><strong>5. Calculate scores</strong>Python calculates weighted scores, criterion benchmarks, performance percentages, and ranks.</div>
-        <div class="step"><strong>6. Review and export</strong>Inspect the evidence and risks in the scorecards, and download the results as JSON.</div>
+        <div class="step"><strong>6. Review and export</strong>Inspect color-coded evidence and risks in each supplier's scorecard tab, and download the run as JSON.</div>
       </div>
       <p><strong>Color key in the scorecards:</strong> green means strong, amber means review, and red means needs attention. The numeric score is shown as well so color is not the only indicator.</p>
       <h3>How ranking is calculated</h3>
@@ -111,12 +112,12 @@
     <section>
       <h2>Which AI model and API key does it use?</h2>
       <ul>
-        <li>The Live LLM screen defaults to <strong>gpt-4o-mini</strong>, called through the OpenAI Python client.</li>
-        <li>The model name is editable in the app, so a different compatible model can be entered. The code expects an OpenAI-compatible chat-completions API that supports JSON mode.</li>
+        <li>The OpenAI API screen defaults to <strong>gpt-4o-mini</strong>, called through the OpenAI Python client.</li>
+        <li>The OpenAI model name is editable in the app; a different OpenAI model that supports JSON mode can be entered.</li>
         <li>The app does <strong>not</strong> include a provider API key in the public source code, SQLite database, or checked-in configuration.</li>
-        <li>In Live mode, the person using the app enters their own API key in a password-masked field. The app passes that value to the OpenAI client for the request; it does not read a key from Streamlit secrets or an environment variable in the reviewed code.</li>
+        <li>In OpenAI API mode, the person using the app enters their own OpenAI API key in a password-masked field. The app passes that value to the OpenAI client for the request; it does not read a key from Streamlit secrets or an environment variable.</li>
         <li>Demo mode makes no LLM request and needs no key.</li>
-        <li>Live API requests include the supplier name, active criteria, and up to 60,000 characters of extracted proposal text. The provider may charge the key owner for use. Check the provider's terms and data-retention policy before sending proposal material.</li>
+        <li>OpenAI API requests include the supplier name, active criteria, and up to 60,000 characters of extracted proposal text. OpenAI may charge the key owner for use. Check its terms and data-retention policy before sending proposal material.</li>
       </ul>
       <p>Password masking only hides the characters on screen; it does not make the key safe to use on an untrusted public app. Prefer a private, authenticated deployment for Live mode.</p>
     </section>
@@ -138,8 +139,8 @@
           </tr>
           <tr>
             <td><strong>Third-party data sharing</strong></td>
-            <td>Live mode sends extracted proposal text to the configured model provider. Demo mode does not.</td>
-            <td>Use only documents you are allowed to share, and review the provider's privacy and retention terms.</td>
+            <td>OpenAI API mode sends extracted proposal text to OpenAI. Demo mode does not.</td>
+            <td>Use only documents you are allowed to share, and review OpenAI's privacy and retention terms.</td>
           </tr>
           <tr>
             <td><strong>Public source and public app</strong></td>

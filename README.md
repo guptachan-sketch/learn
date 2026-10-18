@@ -6,7 +6,7 @@ A classroom mini project that evaluates fictional supplier RFP PDFs against crit
 
 ## Project contents
 
-- `app.py` — Streamlit interface: editable criteria, six bundled fictional examples or PDF uploads, supplier metadata, evaluation, color-coded leaderboard/scorecards, and JSON download.
+- `app.py` — Streamlit interface with horizontal tabs for criteria, supplier evaluation, leaderboard, individual scorecards, and run history.
 - `database.py` — SQLite schema, default criteria, and run/result persistence.
 - `documents.py` — PDF text extraction and fictional proposal generation.
 - `evaluation.py` — prompt construction, optional LLM call, JSON validation, deterministic demo mode, scoring, benchmarks, PPI, and ranking.
@@ -25,7 +25,8 @@ Use Python 3.10 or newer. From this folder:
 3. Generate six fictional supplier documents with `python generate_samples.py`.
 4. Start the app with `streamlit run app.py`.
 5. To demo the bundled proposals, select **Try the six bundled fictional proposals** in the app.
-6. To use the notebook, open `Agentic_RFP_Evaluation.ipynb`, select the same Python environment, and run cells from top to bottom.
+6. Review the leaderboard and open each supplier's tab in **Scorecards** for color-coded criteria, evidence, and risks.
+7. To use the notebook, open `Agentic_RFP_Evaluation.ipynb`, select the same Python environment, and run cells from top to bottom.
 
 On first app launch, SQLite is initialized as `rfp_evaluation.db` and seeded with the sample criteria. The default active weights sum to 100%: Technical Capability 30%, Implementation Plan 20%, Commercial Value 20%, Security & Compliance 20%, and Support & Experience 10%.
 
@@ -42,7 +43,7 @@ The app does not require sign-in. All visitors share evaluation history and can 
 ## LLM key and modes
 
 - **Demo mode:** no API key or AI service needed. A deterministic keyword heuristic exercises the document, validation, scoring, and ranking pipeline. Demo scores are explicitly labeled and are not model judgments.
-- **Live LLM mode:** requires a compatible provider API key and a model that supports JSON-mode chat completions. The Streamlit app accepts the key in a password field for the current session only. Do not place secrets in code, notebooks, or Git. Live API calls may incur charges.
+- **OpenAI API mode:** requires an OpenAI API key and a model that supports JSON-mode chat completions. The app defaults to `gpt-4o-mini` and accepts the key in a password field for the current session only. Do not place secrets in code, notebooks, or Git. API calls may incur charges.
 
 The prompt asks the model to use only proposal evidence, treat document-contained instructions as untrusted, return one score per active criterion, keep scores in range, and return JSON. The application fills missing criteria, clips out-of-range numeric scores, defaults malformed scores to zero, and records warnings.
 
