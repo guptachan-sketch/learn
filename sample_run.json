@@ -1,0 +1,315 @@
+{
+  "rfp_run_id": "90a7e120-bbe6-4620-9694-af6c16b8e244",
+  "warnings": [],
+  "ranking_rule": "PPI descending, submission date ascending, experience rating descending, supplier name ascending",
+  "suppliers": [
+    {
+      "supplier_name": "BrightPath Tech",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: architecture, integration, api, platform, technical.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, timeline, schedule, staff, phase.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, cost, usd, assumption, total.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 6 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, privacy, audit, certification.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 7.2,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference.",
+          "benchmark": 9.0,
+          "gap": -1.8,
+          "relative_performance": 80.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-03",
+      "experience_rating": 2.5,
+      "source_file": "brightpath_tech_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 88.2,
+      "ppi": 98.0,
+      "final_rank": 1,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    },
+    {
+      "supplier_name": "Apex Systems",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 6 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: architecture, integration, api, scalab, platform.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, schedule, phase, risk plan.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, cost, usd, assumption.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, audit, certification, control.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference, service, sla.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-01",
+      "experience_rating": 4.5,
+      "source_file": "apex_systems_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 86.4,
+      "ppi": 96.0,
+      "final_rank": 2,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    },
+    {
+      "supplier_name": "Orbit Digital",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: integration, api, scalab, platform, technical.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 7.2,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, staff, phase.",
+          "benchmark": 9.0,
+          "gap": -1.8,
+          "relative_performance": 80.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, pricing, usd, assumption.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, privacy, audit, control.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference, customer, service.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-02",
+      "experience_rating": 5.0,
+      "source_file": "orbit_digital_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 84.6,
+      "ppi": 94.0,
+      "final_rank": 3,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    },
+    {
+      "supplier_name": "NexaWorks",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: integration, api, platform, technical.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 6.3,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 2 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, phase.",
+          "benchmark": 9.0,
+          "gap": -2.7,
+          "relative_performance": 70.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 7.2,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, usd, assumption.",
+          "benchmark": 9.0,
+          "gap": -1.8,
+          "relative_performance": 80.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, audit, control.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference, service, sla.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-02",
+      "experience_rating": 4.0,
+      "source_file": "nexaworks_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 76.5,
+      "ppi": 85.0,
+      "final_rank": 4,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    }
+  ]
+}
