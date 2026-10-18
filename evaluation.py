@@ -8,10 +8,28 @@ from typing import Any
 
 
 def parse_json_response(content: str) -> dict[str, Any]:
-    """Parse a JSON object, tolerating a surrounding Markdown code fence."""
-    cleaned = content.strip()
-    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", cleaned, flags=re.IGNORECASE)
-    value = json.loads(cleaned)
+    """Parse a JSON object, tolerating fenced blocks and stray text around the payload."""
+    cleaned = (content or "").strip()
+    if not cleaned:
+        raise ValueError("The model returned an empty response.")
+
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.IGNORECASE)
+
+    candidate = cleaned
+    if not candidate.startswith(("{", "[")):
+        starts = [candidate.find("{"), candidate.find("[")]
+        valid_starts = [index for index in starts if index >= 0]
+        if not valid_starts:
+            raise ValueError("The model response did not contain a JSON object.")
+        candidate = candidate[min(valid_starts):]
+
+    try:
+        value, _ = json.JSONDecoder().raw_decode(candidate)
+    except json.JSONDecodeError as exc:
+        raise ValueError("The model response was not valid JSON.") from exc
+
     if not isinstance(value, dict):
         raise ValueError("The model response must be a JSON object.")
     return value
@@ -20,6 +38,7 @@ def parse_json_response(content: str) -> dict[str, Any]:
 def normalize_evaluation(raw: dict[str, Any], criteria: list[dict[str, Any]], supplier_name: str) -> tuple[dict[str, Any], list[str]]:
     """Ensure every active criterion has an in-range score and traceable text fields."""
     warnings: list[str] = []
+    raw = raw or {}
     raw_rows = raw.get("criteria", [])
     if not isinstance(raw_rows, list):
         raw_rows = []
@@ -153,24 +172,50 @@ def calculate_scores(evaluations: list[dict[str, Any]], criteria: list[dict[str,
         raise ValueError(f"Active criterion weights must total 100%; found {total_weight:g}%.")
     warnings: list[str] = []
     suppliers = []
-    for evaluation in evaluations:
-        scores = {int(row["criterion_id"]): row for row in evaluation["criteria"]}
+    for evaluation in evaluations or []:
+        if not isinstance(evaluation, dict):
+            warnings.append("Ignored an evaluation record that was not a dictionary.")
+            continue
+        raw_rows = evaluation.get("criteria", [])
+        if not isinstance(raw_rows, list):
+            raw_rows = []
+            warnings.append(f"{evaluation.get('supplier_name', 'Supplier')}: criteria output was not a list; defaulted to zero.")
+        scores = {}
+        for row in raw_rows:
+            if not isinstance(row, dict):
+                warnings.append(f"{evaluation.get('supplier_name', 'Supplier')}: ignored a malformed criterion result.")
+                continue
+            try:
+                scores[int(row.get("criterion_id"))] = row
+            except (TypeError, ValueError):
+                warnings.append(f"{evaluation.get('supplier_name', 'Supplier')}: ignored a criterion result with an invalid criterion_id.")
         details = []
         absolute = 0.0
         for criterion in active:
             criterion_id = int(criterion["criterion_id"])
             score_row = scores.get(criterion_id, {})
             maximum = float(criterion["max_score"])
-            score = min(max(float(score_row.get("score", 0)), 0.0), maximum)
+            try:
+                score = float(score_row.get("score", 0))
+            except (TypeError, ValueError):
+                score = 0.0
+            score = min(max(score, 0.0), maximum)
             weight = float(criterion["weight"])
             absolute += score / maximum * weight if maximum else 0.0
             details.append({**score_row, "criterion_id": criterion_id, "name": criterion["name"],
                             "score": round(score, 2), "max_score": maximum, "weight": weight})
+        supplier_name = str(evaluation.get("supplier_name", "")).strip() or "Unnamed supplier"
+        try:
+            experience_rating = float(evaluation.get("experience_rating", 0))
+            if not (-float("inf") < experience_rating < float("inf")):
+                raise ValueError
+        except (TypeError, ValueError):
+            experience_rating = 0.0
         suppliers.append({
             **evaluation,
-            "supplier_name": str(evaluation["supplier_name"]).strip(),
+            "supplier_name": supplier_name,
             "submission_date": str(evaluation.get("submission_date", "9999-12-31")),
-            "experience_rating": float(evaluation.get("experience_rating", 0)),
+            "experience_rating": experience_rating,
             "absolute_score": round(absolute, 4), "criteria": details,
         })
     for criterion in active:

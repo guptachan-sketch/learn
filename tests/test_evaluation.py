@@ -53,3 +53,18 @@ def test_active_weights_must_total_one_hundred(criteria):
 
 def test_parse_json_with_fence():
     assert parse_json_response('```json\n{"ok": true}\n```') == {"ok": True}
+
+
+def test_parse_json_with_leading_preamble_and_trailing_text():
+    payload = "Here is the JSON result:\n```json\n{\"ok\": true, \"count\": 2}\n```\nThanks!"
+    assert parse_json_response(payload) == {"ok": True, "count": 2}
+
+
+def test_calculate_scores_ignores_malformed_evaluation_rows(criteria):
+    evaluations = [
+        {"supplier_name": "Alpha", "criteria": [{"criterion_id": 1, "score": 8}, "bad", {"criterion_id": 2, "score": 8}]},
+        {"supplier_name": "Beta", "criteria": None},
+    ]
+    ranked, warnings = calculate_scores(evaluations, criteria)
+    assert [row["supplier_name"] for row in ranked] == ["Alpha", "Beta"]
+    assert any("ignored" in warning.lower() for warning in warnings)
