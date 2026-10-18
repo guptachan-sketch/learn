@@ -1,4 +1,4 @@
-"""Generate four fictional 3-page supplier proposal PDFs in sample_proposals/."""
+"""Generate six fictional supplier proposal PDFs in sample_proposals/."""
 from pathlib import Path
 
 from documents import create_sample_proposals

@@ -1,5 +1,5 @@
 {
-  "rfp_run_id": "d6db57f1-7e22-4358-9e54-c2f730b1863c",
+  "rfp_run_id": "5bd185b0-510e-42b4-9567-1f82dc6c0f37",
   "warnings": [],
   "ranking_rule": "PPI descending, submission date ascending, experience rating descending, supplier name ascending",
   "suppliers": [
@@ -57,14 +57,14 @@
         {
           "criterion_id": 5,
           "name": "Support & Experience",
-          "score": 7.2,
+          "score": 8.1,
           "max_score": 10.0,
           "weight": 10.0,
-          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
-          "evidence": "Demo keyword evidence: support, experience, reference.",
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference, customer.",
           "benchmark": 9.0,
-          "gap": -1.8,
-          "relative_performance": 80.0
+          "gap": -0.9,
+          "relative_performance": 90.0
         }
       ],
       "risks": [
@@ -75,8 +75,8 @@
       "experience_rating": 2.5,
       "source_file": "brightpath_tech_proposal.pdf",
       "evaluation_mode": "demo",
-      "absolute_score": 88.2,
-      "ppi": 98.0,
+      "absolute_score": 89.1,
+      "ppi": 99.0,
       "final_rank": 1,
       "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
     },
@@ -175,14 +175,14 @@
         {
           "criterion_id": 2,
           "name": "Implementation Plan",
-          "score": 7.2,
+          "score": 8.1,
           "max_score": 10.0,
           "weight": 20.0,
-          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
-          "evidence": "Demo keyword evidence: milestone, staff, phase.",
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, schedule, staff, phase.",
           "benchmark": 9.0,
-          "gap": -1.8,
-          "relative_performance": 80.0
+          "gap": -0.9,
+          "relative_performance": 90.0
         },
         {
           "criterion_id": 3,
@@ -229,9 +229,163 @@
       "experience_rating": 5.0,
       "source_file": "orbit_digital_proposal.pdf",
       "evaluation_mode": "demo",
-      "absolute_score": 84.6,
-      "ppi": 94.0,
+      "absolute_score": 86.4,
+      "ppi": 96.0,
       "final_rank": 3,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    },
+    {
+      "supplier_name": "Harborlight Systems",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: integration, api, platform, technical.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 7.2,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, schedule, phase.",
+          "benchmark": 9.0,
+          "gap": -1.8,
+          "relative_performance": 80.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 6 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, pricing, cost, usd, assumption.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, audit, control.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, reference, customer, service.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-05",
+      "experience_rating": 4.5,
+      "source_file": "harborlight_systems_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 81.9,
+      "ppi": 91.0,
+      "final_rank": 4,
+      "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
+    },
+    {
+      "supplier_name": "CedarPeak Solutions",
+      "criteria": [
+        {
+          "criterion_id": 1,
+          "name": "Technical Capability",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 30.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: integration, api, platform, technical.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        },
+        {
+          "criterion_id": 2,
+          "name": "Implementation Plan",
+          "score": 6.3,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 2 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: milestone, phase.",
+          "benchmark": 9.0,
+          "gap": -2.7,
+          "relative_performance": 70.0
+        },
+        {
+          "criterion_id": 3,
+          "name": "Commercial Value",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, pricing, cost, usd, assumption.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 4,
+          "name": "Security & Compliance",
+          "score": 9.0,
+          "max_score": 10.0,
+          "weight": 20.0,
+          "justification": "Demo-mode heuristic found 5 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: security, compliance, audit, certification, control.",
+          "benchmark": 9.0,
+          "gap": 0.0,
+          "relative_performance": 100.0
+        },
+        {
+          "criterion_id": 5,
+          "name": "Support & Experience",
+          "score": 8.1,
+          "max_score": 10.0,
+          "weight": 10.0,
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: support, experience, customer, service.",
+          "benchmark": 9.0,
+          "gap": -0.9,
+          "relative_performance": 90.0
+        }
+      ],
+      "risks": [
+        "Demo mode uses transparent keyword heuristics, not an LLM."
+      ],
+      "overall_summary": "Demonstration scorecard only. Use Live LLM mode for evidence-based proposal analysis.",
+      "submission_date": "2026-10-04",
+      "experience_rating": 3.5,
+      "source_file": "cedarpeak_solutions_proposal.pdf",
+      "evaluation_mode": "demo",
+      "absolute_score": 81.0,
+      "ppi": 90.0,
+      "final_rank": 5,
       "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
     },
     {
@@ -264,14 +418,14 @@
         {
           "criterion_id": 3,
           "name": "Commercial Value",
-          "score": 7.2,
+          "score": 8.1,
           "max_score": 10.0,
           "weight": 20.0,
-          "justification": "Demo-mode heuristic found 3 relevant keyword(s); this is not an AI judgment.",
-          "evidence": "Demo keyword evidence: price, usd, assumption.",
+          "justification": "Demo-mode heuristic found 4 relevant keyword(s); this is not an AI judgment.",
+          "evidence": "Demo keyword evidence: price, cost, usd, assumption.",
           "benchmark": 9.0,
-          "gap": -1.8,
-          "relative_performance": 80.0
+          "gap": -0.9,
+          "relative_performance": 90.0
         },
         {
           "criterion_id": 4,
@@ -306,9 +460,9 @@
       "experience_rating": 4.0,
       "source_file": "nexaworks_proposal.pdf",
       "evaluation_mode": "demo",
-      "absolute_score": 76.5,
-      "ppi": 85.0,
-      "final_rank": 4,
+      "absolute_score": 78.3,
+      "ppi": 87.0,
+      "final_rank": 6,
       "tie_break_explanation": "Sorted by PPI descending, submission date ascending, experience rating descending, then supplier name ascending."
     }
   ]

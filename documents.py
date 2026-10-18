@@ -62,11 +62,62 @@ SAMPLE_SUPPLIERS = [
         "security": "Orbit describes encryption, access reviews, privacy training, and central audit logging. A SOC 2 report and penetration-test summary can be shared during due diligence; control ownership is not mapped in detail.",
         "support": "A named customer-success manager, 24/7 critical support, and a one-hour response target are offered. Orbit reports fifteen years of experience and five relevant enterprise references.",
     },
+    {
+        "name": "CedarPeak Solutions", "date": "2026-10-04", "experience": 3.5,
+        "profile": "Strong governance and migration planning; moderate pricing; limited detail on round-the-clock support.",
+        "architecture": "CedarPeak proposes a hybrid deployment with a documented API gateway, customer-managed identity connection, and separately monitored data import service. The design supports horizontal scaling and a sandbox for integration tests. API throttling and recovery targets need joint design approval.",
+        "plan": "A 22-week delivery is organized into discovery, prototype, two migration waves, user acceptance, and handover. A delivery manager and data lead are named. Weekly risk reviews and a rollback rehearsal are planned before launch; buyer data-cleanup work is excluded.",
+        "price": "The proposal estimates USD 395,000 for implementation and USD 58,000 per year for hosting and standard support. Data cleansing and premium coverage are separately priced. Confirm renewal increases, migration overages, taxes, and third-party costs.",
+        "security": "CedarPeak describes encryption, quarterly access reviews, centralized audit logs, and annual independent penetration testing. A control workbook is available on request, but formal certification status is not stated. Validate remediation targets, breach notification, backup recovery, and data deletion.",
+        "support": "Business-hours support is included with a two-hour critical response target. A named service manager and monthly incident reports are offered; after-hours coverage costs extra. Confirm holiday coverage, escalation contacts, severity definitions, and service credits.",
+    },
+    {
+        "name": "Harborlight Systems", "date": "2026-10-05", "experience": 4.5,
+        "profile": "Mature security evidence and service operations; higher recurring fees; phased rollout across regions.",
+        "architecture": "Harborlight offers a managed cloud platform with regional deployment options, documented REST APIs, single sign-on, and centralized monitoring. Workloads are separated by environment and protected with network policies. Confirm data residency, recovery-time objectives, and integration throughput.",
+        "plan": "A 26-week rollout begins with a pilot business unit, followed by two regional waves and service transition. Go/no-go criteria, rollback steps, and two-week stabilization periods are planned for each wave. The schedule depends on local data-owner availability.",
+        "price": "The quoted implementation is USD 520,000 with annual platform and operations fees of USD 88,000. The estimate includes a pilot and two rollout waves; premium analytics and extra regions are optional. Review renewal terms, overage pricing, taxes, and data export fees.",
+        "security": "Harborlight reports SOC 2 Type II coverage, encryption at rest and in transit, privileged-access monitoring, and tested backups. Penetration-test findings are summarized under NDA. Validate report scope and period, subprocessors, deletion commitments, and customer audit rights.",
+        "support": "The service includes 24/7 critical-incident intake, a 45-minute response target, a named service manager, and monthly availability reporting. Four comparable enterprise references are available. Clarify resolution targets, service credits, maintenance notice, and escalation contacts.",
+    },
 ]
+
+SAMPLE_APPENDICES = {
+    "Apex Systems": [
+        "Discovery should confirm peak transaction volumes, interface owners, data retention, and regional hosting constraints. A sandbox integration is recommended before the final architecture baseline is approved.",
+        "For acceptance, the buyer should request API contract-test results, a migration reconciliation report, a sample penetration-test summary, and evidence that the documented recovery steps were rehearsed.",
+        "Key dependencies include timely access to test systems and approval of migration mappings. The fixed fee excludes taxes and third-party licenses, while cloud costs vary with actual use; contract terms should state how changes are approved.",
+    ],
+    "BrightPath Tech": [
+        "The proposal is an early estimate. Before award, request named delivery roles, milestone exit criteria, a data migration plan, a recovery objective, and a written support escalation path.",
+        "Security review should establish encryption standards, audit-log retention, independent assurance evidence, incident notification timing, data location, and how customer data is deleted at contract end.",
+        "The low initial price excludes or leaves unclear recurring cloud charges, licenses, taxes, and optional work. Request a comparable multi-year total-cost schedule and written response commitments.",
+    ],
+    "NexaWorks": [
+        "The staged design should be validated against expected peak loads and actual source-data quality. Confirm API rate limits, field-level ownership, retention rules, and who controls production encryption keys.",
+        "Useful acceptance evidence includes load-test results, sample migration reconciliations, rollback rehearsal records, training completion, and a signed handover checklist for the service team.",
+        "The estimate separates implementation and hosting. Confirm capacity-tier assumptions, the cost of extra migration cycles, the boundary of included support, and service-credit remedies in the final contract.",
+    ],
+    "Orbit Digital": [
+        "The platform description is broad; a design workshop should produce a system-by-system interface map, named API owners, data-flow diagrams, error handling, and a migration sequence before the build is committed.",
+        "Request a phase-based staffing plan, written acceptance criteria, a dependency register, a sample rollback runbook, and the exact evidence available from the security review.",
+        "The indicative implementation price excludes some migration and premium-support options. Ask for renewal uplifts, usage limits, data-export fees, and a fully priced support schedule for the expected service period.",
+    ],
+    "CedarPeak Solutions": [
+        "The hybrid design depends on buyer identity and network decisions. Validate data-flow boundaries, API throttling, key ownership, restore objectives, and the support split between customer and supplier.",
+        "The migration plan should include signed field mappings, data-quality thresholds, two mock runs, count reconciliation, rollback evidence, and clear buyer responsibilities for cleansing source records.",
+        "Standard support is limited to business hours. Compare the separate after-hours price, contract renewal assumptions, migration overage rates, incident-notification commitment, and certification evidence.",
+    ],
+    "Harborlight Systems": [
+        "The regional rollout should confirm residency requirements, traffic profiles, recovery targets, network connectivity, localization needs, and dependencies for each business unit before the pilot begins.",
+        "For each rollout wave, require go/no-go sign-off, reconciled migration totals, user training records, tested rollback steps, availability monitoring, and evidence that backups can be restored.",
+        "The recurring subscription is higher than several alternatives. Validate user and storage bands, regional add-on fees, renewal increases, premium analytics costs, exit assistance, and data-export terms.",
+    ],
+}
 
 
 def create_sample_proposals(output_dir: Path | str) -> list[dict[str, Any]]:
-    """Create four fictional, multi-page supplier PDFs locally using ReportLab."""
+    """Create six fictional, detailed supplier proposal PDFs locally using ReportLab."""
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import inch
@@ -99,6 +150,10 @@ def create_sample_proposals(output_dir: Path | str) -> list[dict[str, Any]]:
             Paragraph(supplier["security"], styles["BodyText"]),
             Paragraph("6. Support Model and Experience", styles["Heading1"]),
             Paragraph(supplier["support"], styles["BodyText"]),
+            PageBreak(),
+            Paragraph("7. Due Diligence Notes and Assumptions", styles["Heading1"]),
+            Paragraph("The following questions are illustrative review prompts. They are not verified supplier claims and should be resolved with documentary evidence during procurement.", styles["BodyText"]),
+            *[Paragraph(note, styles["BodyText"]) for note in SAMPLE_APPENDICES[supplier["name"]]],
             Paragraph("End of fictional proposal", styles["Italic"]),
         ]
         doc = SimpleDocTemplate(str(path), pagesize=letter, rightMargin=0.7*inch, leftMargin=0.7*inch, topMargin=0.7*inch, bottomMargin=0.7*inch)

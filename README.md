@@ -6,11 +6,11 @@ A classroom mini project that evaluates fictional supplier RFP PDFs against crit
 
 ## Project contents
 
-- `app.py` — Streamlit interface: editable criteria, PDF uploads, supplier metadata, evaluation, leaderboard, scorecards, and JSON download.
+- `app.py` — Streamlit interface: editable criteria, six bundled fictional examples or PDF uploads, supplier metadata, evaluation, color-coded leaderboard/scorecards, and JSON download.
 - `database.py` — SQLite schema, default criteria, and run/result persistence.
 - `documents.py` — PDF text extraction and fictional proposal generation.
 - `evaluation.py` — prompt construction, optional LLM call, JSON validation, deterministic demo mode, scoring, benchmarks, PPI, and ranking.
-- `generate_samples.py` — creates four fictional 3-page PDFs in `sample_proposals/`.
+- `generate_samples.py` — creates six fictional, detailed proposal PDFs in `sample_proposals/`.
 - `Agentic_RFP_Evaluation.ipynb` — notebook walkthrough of the end-to-end pipeline.
 - `tests/` — scoring and validation checks.
 
@@ -22,7 +22,7 @@ Use Python 3.10 or newer. From this folder:
 
 1. Create and activate a virtual environment using your preferred environment manager.
 2. Install the project dependencies with `python -m pip install -r requirements.txt`.
-3. Generate the required fictional supplier documents with `python generate_samples.py`.
+3. Generate six fictional supplier documents with `python generate_samples.py`.
 4. Start the app with `streamlit run app.py`.
 5. To use the notebook, open `Agentic_RFP_Evaluation.ipynb`, select the same Python environment, and run cells from top to bottom.
 
@@ -88,7 +88,7 @@ Run `pytest` from this folder. Tests cover malformed/missing criterion output, s
 
 - [x] Source code, requirements, and clear folder structure
 - [x] SQLite schema and seed criteria on initialization
-- [x] Four fictional supplier proposal PDFs can be generated locally
+- [x] Six fictional supplier proposal PDFs can be generated locally
 - [x] Notebook pipeline walkthrough
 - [x] JSON export and validation warnings
 - [ ] Run the tests and capture screenshots/demo evidence

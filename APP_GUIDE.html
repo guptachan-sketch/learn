@@ -97,12 +97,13 @@
       <h2>How a comparison works</h2>
       <div class="flow">
         <div class="step"><strong>1. Set the criteria</strong>Choose which criteria are active and their weights. Active weights must add to 100%.</div>
-        <div class="step"><strong>2. Upload proposals</strong>Add text-based PDFs and enter supplier names, submission dates, and experience ratings.</div>
+        <div class="step"><strong>2. Choose proposals</strong>Use the six bundled fictional examples for a quick demo, or upload your own text-based PDFs and enter supplier details.</div>
         <div class="step"><strong>3. Assess each proposal</strong>Demo mode uses keywords; Live mode sends extracted text to the chosen AI provider.</div>
         <div class="step"><strong>4. Check and normalize</strong>The app checks the response shape, fills missing scores with zero, clips scores to their allowed range, and shows warnings.</div>
         <div class="step"><strong>5. Calculate scores</strong>Python calculates weighted scores, criterion benchmarks, performance percentages, and ranks.</div>
         <div class="step"><strong>6. Review and export</strong>Inspect the evidence and risks in the scorecards, and download the results as JSON.</div>
       </div>
+      <p><strong>Color key in the scorecards:</strong> green means strong, amber means review, and red means needs attention. The numeric score is shown as well so color is not the only indicator.</p>
       <h3>How ranking is calculated</h3>
       <p>The absolute score is the weighted sum of each criterion score divided by its maximum. The PPI is a weighted average of each supplier's performance relative to the best supplier in that run for each criterion. The leaderboard sorts by PPI (high to low), earlier submission date, higher experience rating, and then supplier name alphabetically.</p>
     </section>
@@ -184,6 +185,7 @@
         <li><code>database.py</code> creates and reads the SQLite tables.</li>
         <li><code>tests/</code> contains automated checks for scoring and response validation.</li>
       </ul>
+      <p>The app includes six fictional supplier proposals with extra due-diligence notes. Select “Try the six bundled fictional proposals” for a quick demo. Their claims and scores are synthetic and must not be treated as real procurement evidence.</p>
     </section>
 
     <footer>
