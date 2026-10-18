@@ -1,9 +1,11 @@
 [theme]
-primaryColor = "#1454e8"
-backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f4f7fb"
-textColor = "#182230"
+base = "light"
+primaryColor = "#2457A7"
+backgroundColor = "#F7F9FC"
+secondaryBackgroundColor = "#EDF2F8"
+textColor = "#172B4D"
 font = "sans serif"
+chartCategoricalColors = ["#2457A7", "#16A085", "#E6A23C", "#7950B8", "#D95757", "#3687A8"]
 
 [server]
 headless = true

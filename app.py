@@ -71,12 +71,73 @@ with st.sidebar:
     st.divider()
     st.caption("OpenAI API evaluations may incur charges and can vary. Arithmetic and supplier ordering are computed deterministically in Python.")
 
-section_criteria, section_evaluate, section_leaderboard, section_scorecards, section_history = st.tabs(
-    ["1 · Criteria", "2 · Evaluate suppliers", "3 · Leaderboard", "4 · Scorecards", "5 · History"]
+section_overview, section_criteria, section_evaluate, section_leaderboard, section_scorecards, section_history = st.tabs(
+    ["Overview", "1 · Criteria", "2 · Evaluate suppliers", "3 · Leaderboard", "4 · Scorecards", "5 · History"]
 )
 
 criteria = get_criteria(active_only=False)
 criteria_frame = pd.DataFrame(criteria)
+latest = st.session_state.get("latest_run")
+
+with section_overview:
+    with st.container(border=True):
+        intro, mode_summary = st.columns([3, 1])
+        with intro:
+            st.subheader("A clearer view of every proposal")
+            st.write(
+                "Compare suppliers against weighted criteria, inspect their evidence, "
+                "and review risks before making a decision."
+            )
+        with mode_summary:
+            if mode == "Demo (no API key)":
+                st.success("Demo mode · no API key")
+            else:
+                st.warning(f"OpenAI API · {model}")
+
+    active_criteria = [item for item in criteria if item["is_active"]]
+    if latest and latest.get("suppliers"):
+        best_supplier = latest["suppliers"][0]
+        summary_columns = st.columns(4)
+        summary_columns[0].metric("Suppliers evaluated", len(latest["suppliers"]))
+        summary_columns[1].metric("Leading supplier", best_supplier["supplier_name"])
+        summary_columns[2].metric("Top peer performance", f"{best_supplier['ppi']:.1f}%")
+        summary_columns[3].metric("Active criteria", len(active_criteria))
+
+        with st.container(border=True):
+            st.markdown("#### At-a-glance comparison")
+            st.caption("Scores are normalized to each criterion's maximum. Select Leaderboard for the full ranked view.")
+            comparison_rows = [
+                {
+                    "Criterion": item["name"],
+                    supplier["supplier_name"]: round(
+                        float(item["score"]) / float(item["max_score"]) * 100, 1
+                    ) if float(item["max_score"]) else 0.0,
+                }
+                for supplier in latest["suppliers"]
+                for item in supplier["criteria"]
+            ]
+            comparison_data = (
+                pd.DataFrame(comparison_rows)
+                .groupby("Criterion", sort=False)
+                .first()
+            )
+            st.bar_chart(
+                comparison_data,
+                horizontal=True,
+                x_label="Score (% of criterion maximum)",
+                y_label="Criterion",
+                height=max(260, 52 * len(comparison_data)),
+            )
+    else:
+        summary_columns = st.columns(3)
+        summary_columns[0].metric("Active criteria", len(active_criteria))
+        summary_columns[1].metric("Bundled examples", len(SAMPLE_SUPPLIERS))
+        summary_columns[2].metric("Ready to evaluate", "Yes" if active_criteria else "No")
+        with st.container(border=True):
+            st.markdown("#### Get started")
+            st.write("Open **Evaluate suppliers** and select the bundled fictional proposals for a quick end-to-end demo, or upload your own text-based PDFs.")
+            st.caption("Demo scores are keyword-based examples, not AI judgments. Do not upload confidential supplier documents to this public app.")
+
 with section_criteria:
     st.subheader("Evaluation criteria")
     st.caption("Set the active criteria and their weights. Active weights must total 100%.")
@@ -102,8 +163,6 @@ with section_criteria:
                 st.rerun()
             except (ValueError, sqlite3.Error) as error:
                 st.error(str(error))
-
-latest = st.session_state.get("latest_run")
 
 with section_evaluate:
     st.subheader("Supplier proposals")
@@ -230,6 +289,16 @@ with section_leaderboard:
         ]
         leaderboard_frame = pd.DataFrame(leaderboard)
         st.caption("Color key: green = strong, amber = review, red = needs attention.")
+        chart_frame = leaderboard_frame.set_index("Supplier")[["Weighted score", "Peer performance (%)"]]
+        with st.container(border=True):
+            st.markdown("#### Score comparison")
+            st.bar_chart(
+                chart_frame,
+                horizontal=True,
+                x_label="Score",
+                y_label="Supplier",
+                height=max(260, 52 * len(chart_frame)),
+            )
         styled_leaderboard = leaderboard_frame.style.map(
             performance_style, subset=["Weighted score"]
         ).map(relative_style, subset=["Peer performance (%)"])

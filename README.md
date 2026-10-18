@@ -6,7 +6,7 @@ A classroom mini project that evaluates fictional supplier RFP PDFs against crit
 
 ## Project contents
 
-- `app.py` — Streamlit interface with horizontal tabs for criteria, supplier evaluation, leaderboard, individual scorecards, and run history.
+- `app.py` — Streamlit dashboard with an overview, supplier comparison charts, and horizontal tabs for criteria, evaluation, leaderboard, individual scorecards, and run history.
 - `database.py` — SQLite schema, default criteria, and run/result persistence.
 - `documents.py` — PDF text extraction and fictional proposal generation.
 - `evaluation.py` — prompt construction, optional LLM call, JSON validation, deterministic demo mode, scoring, benchmarks, PPI, and ranking.
